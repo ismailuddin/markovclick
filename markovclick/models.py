@@ -12,12 +12,6 @@ class MarkovClickstream:
     Args:
         clickstream_list (list): List of clickstream data. Each page should be
             encoded as a string, prefixed by a letter e.g. 'P1'
-        dummy_kws (dict): Dictionary with keys specifiying information for
-            generating dummy data. `nOfStreams` (int) specifies how many random
-            clickstreams to generate. `nOfPages` (int) specifiies how many
-            unique pages to use to generate the clickstream. `length`(list)
-            specifies a range within which to set the length of each randomly
-            generated clickstream.
     """
 
     def __init__(self, clickstream_list: list=None):
