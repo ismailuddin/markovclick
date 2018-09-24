@@ -1,0 +1,5 @@
+name: markovclick
+channels:
+  - defaults
+prefix: /anaconda3/envs/markovclick
+
