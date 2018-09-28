@@ -21,11 +21,11 @@ def genRandClickstreamList(nOfStreams: int, nOfPages: int, length: list=[8, 12])
 
     clickstreamList = []
 
-    for i in range(nOfStreams):
-        _length = random.randrange(length[0], length[1])
+    def page(x):
+        return random.randrange(0, x)
 
-        def page(x):
-            return random.randrange(0, x)
+    for _ in range(nOfStreams):
+        _length = random.randrange(length[0], length[1]) 
         
         clickstream = ['P{}'.format(page(nOfPages)) for x in range(_length)]
         clickstreamList.append(clickstream)
