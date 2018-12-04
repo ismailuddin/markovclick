@@ -1,4 +1,4 @@
-![](/Users/iuddin/Documents/GitHub/markovclick/header.png)
+![](header.png)
 
 # markovclick
 
@@ -65,4 +65,4 @@ sns.heatmap(m.probMatrix, xticklabels=m.pages, yticklabels=m.pages)
 
 
 
-![](/Users/iuddin/Documents/GitHub/markovclick/heatmap_example.png)
+![](heatmap_example.png)
