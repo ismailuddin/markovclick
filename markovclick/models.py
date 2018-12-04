@@ -14,10 +14,10 @@ class MarkovClickstream:
             encoded as a string, prefixed by a letter e.g. 'P1'
     """
 
-    def __init__(self, clickstream_list: list=None):
+    def __init__(self, clickstream_list: list=None, prefixed=True):
         self.clickstream_list = clickstream_list
         self.pages = []
-        self.getUniquePages()
+        self.getUniquePages(prefixed=prefixed)
 
         self.countMatrix = np.zeros([
             len(self.pages),
@@ -28,14 +28,17 @@ class MarkovClickstream:
         self.populateCountMatrix()
         self.computeProbabilityMatrix()
 
-    def getUniquePages(self):
+    def getUniquePages(self, prefixed=True):
         """
         Retrieves all the unique pages within the provided list of
         clickstreams.
         """
 
         allPages = chain.from_iterable(self.clickstream_list)
-        self.pages = sorted(list(set(allPages)), key=lambda x: int(x[1:]))
+        if prefixed:
+            self.pages = sorted(list(set(allPages)), key=lambda x: int(x[1:]))
+        else:
+            self.pages = sorted(list(set(allPages)), key=lambda x: int(x))
 
         return self.pages
 
@@ -64,9 +67,6 @@ class MarkovClickstream:
         
         Args:
             row : Each row within numpy matrix to act upon.
-
-        Returns:
-
         """
 
         sumOfEachRow = np.sum(row)

@@ -3,6 +3,5 @@
 ####################
 
 .. toctree::
-   :maxdepth: 2
-
-   models_api
+  :maxdepth: 2
+  models_api

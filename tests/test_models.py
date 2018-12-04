@@ -5,6 +5,7 @@ from unittest import mock
 import numpy as np
 from tqdm import tqdm
 
+
 @pytest.fixture(scope="function")
 def random_clickstream():
     """
@@ -48,7 +49,7 @@ def test_prob_after_n_trans(markov_clickstream):
 
     probMatrix = markov_clickstream.probMatrix
     _probMatrixAfterT = probMatrix
-    for n in tqdm(range(0, 100)):
+    for _ in tqdm(range(0, 100)):
         _probMatrixAfterT = np.dot(_probMatrixAfterT, probMatrix)
         rows = range(0, _probMatrixAfterT.shape[0])
 
