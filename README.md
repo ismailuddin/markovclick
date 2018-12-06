@@ -34,7 +34,7 @@ To start using the package without any data, `markovclick` can produce dummy dat
 
 ```python
 from markovclick import dummy
-clickstream = dummy.genRandClickstreamList(nOfStreams=100, nOfPages=12)
+clickstream = dummy.gen_random_clickstream(nOfStreams=100, nOfPages=12)
 ```
 
 
@@ -52,7 +52,7 @@ from markovclick.models import MarkovClickstream
 m = MarkovClickstream(clickstream)
 ```
 
-The instance `m` of the `MarkovClickstream` class provides access the class's attributes such as the probability matrix (`m.probMatrix`) used to model the Markov chain, and the list of unique pages (`m.pages`) featuring in the clickstream.
+The instance `m` of the `MarkovClickstream` class provides access the class's attributes such as the probability matrix (`m.prob_matrix`) used to model the Markov chain, and the list of unique pages (`m.pages`) featuring in the clickstream.
 
 
 #### Visualising as a heatmap
@@ -60,7 +60,7 @@ The instance `m` of the `MarkovClickstream` class provides access the class's at
 The probability matrix can be visualised as a heatmap as follows:
 
 ```python
-sns.heatmap(m.probMatrix, xticklabels=m.pages, yticklabels=m.pages)
+sns.heatmap(m.prob_matrix, xticklabels=m.pages, yticklabels=m.pages)
 ```
 
 
