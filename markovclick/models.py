@@ -1,8 +1,11 @@
-import numpy as np
-import random
-from tqdm import tqdm
-import pandas as pd
+"""
+Models module which holds MarkovClickstream model.
+"""
+
+
 from itertools import product, chain
+from tqdm import tqdm
+import numpy as np
 
 
 class MarkovClickstream:
@@ -14,78 +17,96 @@ class MarkovClickstream:
             encoded as a string, prefixed by a letter e.g. 'P1'
     """
 
-    def __init__(self, clickstream_list: list=None, prefixed=True):
+    def __init__(self, clickstream_list: list = None, prefixed=True):
         self.clickstream_list = clickstream_list
         self.pages = []
-        self.getUniquePages(prefixed=prefixed)
+        self.get_unique_pages(prefixed=prefixed)
 
-        self.countMatrix = np.zeros([
-            len(self.pages),
-            len(self.pages)
-        ])
-        self.probMatrix = None
+        self._count_matrix = None
+        self.initialise_count_matrix()
+        self._prob_matrix = None
 
-        self.populateCountMatrix()
-        self.computeProbabilityMatrix()
+        self.populate_count_matrix()
+        self.compute_prob_matrix()
 
-    def getUniquePages(self, prefixed=True):
+    @property
+    def count_matrix(self):
+        return self._count_matrix
+
+    @property
+    def prob_matrix(self):
+        return self._prob_matrix
+
+    def get_unique_pages(self, prefixed=True):
         """
         Retrieves all the unique pages within the provided list of
         clickstreams.
         """
 
-        allPages = chain.from_iterable(self.clickstream_list)
+        populate_count_matrix = chain.from_iterable(self.clickstream_list)
         if prefixed:
-            self.pages = sorted(list(set(allPages)), key=lambda x: int(x[1:]))
+            self.pages = sorted(list(set(populate_count_matrix)), key=lambda x: int(x[1:]))
         else:
-            self.pages = sorted(list(set(allPages)), key=lambda x: int(x))
+            self.pages = sorted(list(set(populate_count_matrix)), key=lambda x: int(x))
 
         return self.pages
 
-    def populateCountMatrix(self):
+    def initialise_count_matrix(self):
+        """
+        Initialises an empty count matrix.
+        """
+        self._count_matrix = np.zeros([
+            len(self.pages),
+            len(self.pages)
+        ])
+
+    def populate_count_matrix(self):
         """
         Assembles a matrix of counts of transitions from each possible state,
         to every other possible state.
         """
-        
+
+        self.initialise_count_matrix()
         # For each session in list of sessions
         for session in self.clickstream_list:
             for j in range(0, len(session) - 1):
-                nextState = self.pages.index(session[j+1])
-                currentState = self.pages.index(session[j])
+                next_state = self.pages.index(session[j+1])
+                current_state = self.pages.index(session[j])
 
-                self.countMatrix[currentState, nextState] += 1
+                self._count_matrix[current_state, next_state] += 1
 
-        return self.countMatrix
+        return self._count_matrix
 
-    def normaliseRow(self, row):
+    @staticmethod
+    def normalise_row(row):
         """
         Normalises each row in count matrix, to produce a probability.
-        
-        To be used when iterating over rows of `self.countMatrix`. Sum of each
+
+        To be used when iterating over rows of `self.count_matrix`. Sum of each
         row adds up to 1.
-        
+
         Args:
             row : Each row within numpy matrix to act upon.
         """
+        row_sum = np.sum(row)
+        if row_sum == 0:
+            return row
 
-        sumOfEachRow = np.sum(row)
-        return np.nan_to_num(row / sumOfEachRow)
+        normalised = np.nan_to_num(np.divide(row, np.sum(row)))
+        return normalised
 
-    def computeProbabilityMatrix(self):
+    def compute_prob_matrix(self):
         """
         Computes the probability matrix for the input clickstream.
-        
         """
+        self._prob_matrix = np.apply_along_axis(self.normalise_row, 1,
+                                                self.count_matrix)
 
-        self.probMatrix = np.apply_along_axis(self.normaliseRow, 1,
-                                              self.countMatrix)
-
-    def calcProbToPage(self, clickstream: list, verbose=True):
+    def calc_prob_to_page(self, clickstream: list, verbose=True) -> float:
         """
         Calculates the probability for a sequence of clicks (clickstream)
         taking place.
-                
+
         Args:
             clickstream (list): Sequence of clicks (pages), for which to
                 calculate the probability of occuring.
@@ -93,30 +114,30 @@ class MarkovClickstream:
                 output is printed to the terminal, or simply provided back.
         """
 
-        totalProb = 1
+        total_prob = 1
 
-        currPage = self.pages.index(clickstream[0])
+        curr_page = self.pages.index(clickstream[0])
 
         for i in range(0, len(clickstream) - 1):
-            nextPage = self.pages.index(clickstream[i + 1])
-            totalProb = totalProb * self.probMatrix[currPage, nextPage]
+            next_page = self.pages.index(clickstream[i + 1])
+            total_prob = total_prob * self.prob_matrix[curr_page, next_page]
+            curr_page = next_page
 
-            currPage = nextPage
-        
         if verbose:
             print("Probability for clickstream: \n {} \nis{}".format(
-                ':'.join(clickstream), totalProb
+                ':'.join(clickstream), total_prob
             ))
-        
-        return totalProb
 
-    def permutations(self, iterable, r=None):
+        return total_prob
+
+    @staticmethod
+    def permutations(iterable, r=None):
         """
-            Modification of `itertools.permutations()` function to yield a 
-            mutable list rather than an immutable tuple. 
+        Modification of `itertools.permutations()` function to yield a
+        mutable list rather than an immutable tuple.
 
-            Unlike the Cartesian product, this does not return a sequence
-            with repetitions in it.
+        Unlike the Cartesian product, this does not return a sequence
+        with repetitions in it.
         """
         pool = tuple(iterable)
         n = len(pool)
@@ -125,56 +146,57 @@ class MarkovClickstream:
             if len(set(indices)) == r:
                 yield [pool[i] for i in indices]
 
-    def cartesianProduct(self, iterable, repeats=1):
+    @staticmethod
+    def cartesian_product(iterable, repeats=1):
         """
-            Modifies Python's `itertools.product()` function
-            to return a list of lists, rather than list of
-            tuples.
+        Modifies Python's `itertools.product()` function
+        to return a list of lists, rather than list of
+        tuples.
 
-            Args:
-                iterable (list): List of iterables to assemble
-                    Cartesian product from
-                repeats (int): Number of elements in each list of
-                    the Cartesian product
+        Args:
+            iterable (list): List of iterables to assemble
+                Cartesian product from
+            repeats (int): Number of elements in each list of
+                the Cartesian product
 
-            Returns:
-                List of lists of Cartesian product
+        Returns:
+            List of lists of Cartesian product
         """
 
         return list(list(p) for p in product(iterable, repeat=repeats))
 
-    def calcProbForAllRoutesTo(self, clickstream: list, end_page: str,
-                               clicks: int, cartesianProduct=True):
+    def calc_prob_all_routes_to(self, clickstream: list, end_page: str,
+                                clicks: int, cartesian_product=True):
         """
-            Calculates the probability given an input sequence of page clicks, 
-            to reach the specified end state with the specified number of
-            transitions before the end state.
+        Calculates the probability given an input sequence of page clicks,
+        to reach the specified end state with the specified number of
+        transitions before the end state.
 
-            Args:
-                clickstream (list): List (sequence) of states
-                end_state (str): Desired end to state to calculate
-                    probability towards
-                transitions (int): Number of transitions to make after input
-                    sequence, before reaching end state.
+        Args:
+            clickstream (list): List (sequence) of states
+            end_state (str): Desired end to state to calculate
+                probability towards
+            transitions (int): Number of transitions to make after input
+                sequence, before reaching end state.
 
-            Returns:
-                float: Probability
+        Returns:
+            float: Probability
         """
 
-        if cartesianProduct:
-            potentialRoutes = list(self.cartesianProduct(self.pages, 
-                                                         repeats=clicks))
+        if cartesian_product:
+            potential_routes = list(self.cartesian_product(self.pages,
+                                                           repeats=clicks))
         else:
-            potentialRoutes = list(self.permutations(self.pages, r=clicks))
+            potential_routes = list(self.permutations(self.pages, r=clicks))
 
-        potentialRouteProbs = []
+        potential_routes_prob = []
 
-        for i, route in tqdm(enumerate(potentialRoutes)):
+        for i, route in tqdm(enumerate(potential_routes)):
             for state in clickstream[::-1]:
                 route.insert(0, state)
             route.append(end_page)
 
-            prob = self.calcProbToPage(route, verbose=False)
-            potentialRouteProbs.append(prob)
+            prob = self.calc_prob_to_page(route, verbose=False)
+            potential_routes_prob.append(prob)
 
-        return potentialRoutes, potentialRouteProbs
+        return potential_routes, potential_routes_prob
