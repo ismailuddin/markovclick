@@ -1,107 +1,41 @@
-#!/usr/bin/env python
-import io
-import os
-import sys
-from shutil import rmtree
+from setuptools import setup, find_packages
+from codecs import open
+from os import path
 
-from setuptools import find_packages, setup, Command
+__version__ = '0.0.1'
 
-# Package meta-data.
-NAME = 'markovclick'
-DESCRIPTION = """Package to model clickstream data using higher order Markov\
-    chains"""
-URL = 'https://github.com/ismailuddin/markovclick'
-EMAIL = 'ismail.sameeuddin@gmail.com'
-AUTHOR = 'Ismail Uddin'
-REQUIRES_PYTHON = '>=3.6.0'
-VERSION = None
+HERE = path.abspath(path.dirname(__file__))
 
-REQUIRED = [
-    'tqdm', 'pandas', 'numpy'
-]
+LONG_DESCRIPTION = """`markovclick` allows you to model clickstream data from\
+websites as Markov chains, which can then be used to predict the next likely\
+click on a website for a user, given their history and current state.
+"""
 
-HERE = os.path.abspath(os.path.dirname(__file__))
+# Get the dependencies and installs
+with open(path.join(HERE, 'requirements.txt'), encoding='utf-8') as f:
+    ALL_REQS = f.read().split('\n')
 
-# Import the README and use it as the long-description.
-# Note: this will only work if 'README.md' is present in your MANIFEST.in file!
-try:
-    with io.open(os.path.join(HERE, 'README.md'), encoding='utf-8') as f:
-        LONG_DESCRIPTION = '\n' + f.read()
-except FileNotFoundError:
-    LONG_DESCRIPTION = DESCRIPTION
-
-# Load the package's __version__.py module as a dictionary.
-ABOUT = {}
-if not VERSION:
-    with open(os.path.join(HERE, NAME, '__version__.py')) as f:
-        exec(f.read(), ABOUT)
-else:
-    ABOUT['__version__'] = VERSION
-
-
-class UploadCommand(Command):
-    """Support setup.py upload."""
-
-    description = 'Build and publish the package.'
-    user_options = []
-
-    @staticmethod
-    def status(s):
-        """Prints things in bold."""
-        print('\033[1m{0}\033[0m'.format(s))
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        try:
-            self.status('Removing previous builds…')
-            rmtree(os.path.join(HERE, 'dist'))
-        except OSError:
-            pass
-
-        self.status('Building Source and Wheel (universal) distribution…')
-        os.system('{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
-
-        self.status('Uploading the package to PyPI via Twine…')
-        os.system('twine upload dist/*')
-
-        self.status('Pushing git tags…')
-        os.system('git tag v{0}'.format(about['__version__']))
-        os.system('git push --tags')
-
-        sys.exit()
-
+INSTALL_REQUIRES = [x.strip() for x in ALL_REQS if 'git+' not in x]
+DEPENDENCY_LINKS = [x.strip().replace('git+', '') for x in ALL_REQS if x.startswith('git+')]
 
 setup(
-    name=NAME,
-    version=ABOUT['__version__'],
-    description=DESCRIPTION,
-    LONG_DESCRIPTION=LONG_DESCRIPTION,
-    LONG_DESCRIPTION_content_type='text/markdown',
-    author=AUTHOR,
-    author_email=EMAIL,
-    python_requires=REQUIRES_PYTHON,
-    url=URL,
-    packages=find_packages(exclude=('tests',)),
-    install_requires=REQUIRED,
-    include_package_data=True,
-    license='MIT',
+    name='markovclick',
+    version=__version__,
+    description='Package for modelling clickstream data using Markov chains',
+    long_description=LONG_DESCRIPTION,
+    url='https://github.com/ismailuddin/markovclick',
+    download_url='https://github.com/ismailuddin/markovclick/tarball/' + __version__,
+    license='BSD',
     classifiers=[
-        # Trove classifiers
-        # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python',
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Developers',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: Implementation :: CPython',
-        'Programming Language :: Python :: Implementation :: PyPy'
     ],
-    # $ setup.py publish support.
-    cmdclass={
-        'upload': UploadCommand,
-    },
+    keywords='',
+    packages=find_packages(exclude=['docs', 'tests*']),
+    include_package_data=True,
+    author='Ismail Uddin',
+    INSTALL_REQUIRES=INSTALL_REQUIRES,
+    DEPENDENCY_LINKS=DEPENDENCY_LINKS,
+    author_email='ismail.sameeuddin@gmail.com'
 )

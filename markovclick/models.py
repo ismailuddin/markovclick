@@ -31,10 +31,16 @@ class MarkovClickstream:
 
     @property
     def count_matrix(self):
+        """
+        Sets attribute to access the count matrix
+        """
         return self._count_matrix
 
     @property
     def prob_matrix(self):
+        """
+        Sets attribute to access the probability matrix
+        """
         return self._prob_matrix
 
     def get_unique_pages(self, prefixed=True):
@@ -191,7 +197,7 @@ class MarkovClickstream:
 
         potential_routes_prob = []
 
-        for i, route in tqdm(enumerate(potential_routes)):
+        for route in tqdm(potential_routes):
             for state in clickstream[::-1]:
                 route.insert(0, state)
             route.append(end_page)
