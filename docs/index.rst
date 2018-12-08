@@ -5,8 +5,8 @@
 =============
 markovclick
 =============
-.. image:: https://travis-ci.com/ismailuddin/markovclick.svg?branch=master
-    :target: https://travis-ci.com/ismailuddin/markovclick
+.. image:: https://circleci.com/gh/ismailuddin/markovclick/tree/master.svg
+    :target: https://circleci.com/gh/ismailuddin/markovclick/tree/master
 .. image:: https://img.shields.io/aur/license/yaourt.svg
 
 .. toctree::

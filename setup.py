@@ -11,12 +11,12 @@ websites as Markov chains, which can then be used to predict the next likely\
 click on a website for a user, given their history and current state.
 """
 
-Get the dependencies and installs
-with open(path.join(HERE, 'requirements.txt'), encoding='utf-8') as f:
-    ALL_REQS = f.read().split('\n')
+# Get the dependencies and installs
+# with open(path.join(HERE, 'requirements.txt'), encoding='utf-8') as f:
+#     ALL_REQS = f.read().split('\n')
 
-INSTALL_REQUIRES = [x.strip() for x in ALL_REQS if 'git+' not in x]
-DEPENDENCY_LINKS = [x.strip().replace('git+', '') for x in ALL_REQS if x.startswith('git+')]
+# INSTALL_REQUIRES = [x.strip() for x in ALL_REQS if 'git+' not in x]
+# DEPENDENCY_LINKS = [x.strip().replace('git+', '') for x in ALL_REQS if x.startswith('git+')]
 
 setup(
     name='markovclick',
