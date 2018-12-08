@@ -116,8 +116,8 @@ class Sessionise:
 
     def _create_partitions(self, partitions: int) -> list:
         """
-        Splits clickstream dataset into specified number of partitions, based on
-        the unique IDs (e.g. cookie ID) in the DataFrame.
+        Splits clickstream dataset into specified number of partitions, based
+        on the unique IDs (e.g. cookie ID) in the DataFrame.
 
         Args:
             partitions (int): Number of partitions to split into
@@ -126,8 +126,38 @@ class Sessionise:
             list: List of DataFrames partitioned
         """
         uniq_ids = self.df[self.unique_id_col].unique()
-        partitions = np.array_split(uniq_ids, partitions)
+        partitions = list(filter(None, np.array_split(uniq_ids, partitions)))
         return partitions
+
+    def _assign_sessions_parallel(self, df, partition: list, queue):
+        """
+        Assigns sessions to partition of DataFrame, created using list of 
+        unique IDs provided in partition argument.
+        
+        Args:
+            df (pd.DataFrame): DataFrame containing clickstream data
+            partition (list): List of unique IDs to subset DataFrame
+            queue: multiprocessing.Queue object to add results to
+        """
+        _df = df.loc[df[self.unique_id_col].isin(partition), :]
+        curr_session_uuid = str(uuid4())
+
+        def get_or_create_uuid(row) -> str:
+            nonlocal curr_session_uuid
+            curr_uniq_id = row[self.unique_id_col]
+            prev_anon_id = row['prev_uniq_id']
+            boundary = row['session_boundary']
+
+            if boundary is True or curr_uniq_id != prev_anon_id:
+                self.curr_uniq_id = str(uuid4())
+                return self.curr_uniq_id
+            else:
+                return self.curr_uniq_id
+
+        _df.loc[:, 'session_uuid'] = _df.apply(
+            lambda row: get_or_create_uuid(row), axis=1
+        )
+        queue.put(_df)
 
     def assign_sessions(self, n_jobs: int = 1):
         """
@@ -139,7 +169,7 @@ class Sessionise:
                 parallel processing.
 
         Returns:
-            pd.DataFrame: Returns sessionised DataFrame, with session IDs 
+            pd.DataFrame: Returns sessionised DataFrame, with session IDs
             stored in `session_UUID` column.
         """
         self._add_session_boundaries()
@@ -149,26 +179,12 @@ class Sessionise:
             )
             return self.df
         if n_jobs > 1:
-            curr_session_uuid = str(uuid4())
-
-            def _parallel_sessionise(row) -> str:
-                nonlocal curr_session_uuid
-                curr_uniq_id = row[self.unique_id_col]
-                prev_anon_id = row['prev_uniq_id']
-                boundary = row['session_boundary']
-
-                if boundary is True or curr_uniq_id != prev_anon_id:
-                    self.curr_uniq_id = str(uuid4())
-                    return self.curr_uniq_id
-                else:
-                    return self.curr_uniq_id
-
             partitions = self._create_partitions(n_jobs)
             queue = Queue()
             processes = []
             for partition in partitions:
                 processes.append(Process(
-                    target=_parallel_sessionise,
+                    target=self._assign_sessions_parallel,
                     args=(self.df, partition, queue)
                 ))
             for process in processes:
@@ -178,4 +194,5 @@ class Sessionise:
                 process.join()
 
             self._df = pd.concat(results, axis=0)
+            self._df = self._df.sort_index()
             return self.df

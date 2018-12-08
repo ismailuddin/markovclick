@@ -15,33 +15,7 @@ class TestSessionise(unittest.TestCase):
     """
     Class to test preprocessing.Sessionise class
     """
-
-    def test__init__(self):
-        date_col = 'date'
-        unique_id_col = 'unique_id'
-        session_timeout = 60
-        data = {
-            date_col: [datetime(2018, 1, 1), datetime(2018, 1, 2)],
-            unique_id_col: [str(uuid.uuid4()), str(uuid.uuid4())]
-        }
-        df = pd.DataFrame(data)
-        sessionise = preprocessing.Sessionise(
-            df,
-            unique_id_col,
-            date_col,
-            session_timeout
-        )
-        self.assertEqual(sessionise.unique_id_col, unique_id_col)
-        self.assertEqual(sessionise.datetime_col, date_col)
-        self.assertEqual(sessionise.session_timeout, session_timeout)
-        # Test for incorrect datetime column name
-        with self.assertRaises(TypeError):
-            preprocessing.Sessionise(df, unique_id_col, unique_id_col)
-        # Test for unique ID column name which is not in DataFrame
-        with self.assertRaises(ValueError):
-            preprocessing.Sessionise(df, 'incorrect', date_col)
-
-    def test_add_session_boundaries(self):
+    def setUp(self):
         data = {
             'date': [
                 datetime(2018, 1, 1, 10, 10),
@@ -52,10 +26,38 @@ class TestSessionise(unittest.TestCase):
                 datetime(2018, 1, 1, 11, 15),
                 datetime(2018, 1, 1, 11, 55),
             ],
-            'uniq_id': ['id1', 'id1', 'id1', 'id1', 'id2', 'id2', 'id3']
+            'unique_id': ['id1', 'id1', 'id1', 'id1', 'id2', 'id2', 'id3']
         }
-        _df = pd.DataFrame(data)
-        sessionise = preprocessing.Sessionise(_df, 'uniq_id', 'date')
+        self._df = pd.DataFrame(data)
+
+    def test__init__(self):
+        """
+        Tests the constructor function
+        """
+        date_col = 'date'
+        unique_id_col = 'unique_id'
+        session_timeout = 60
+        sessionise = preprocessing.Sessionise(
+            self._df,
+            unique_id_col,
+            date_col,
+            session_timeout
+        )
+        self.assertEqual(sessionise.unique_id_col, unique_id_col)
+        self.assertEqual(sessionise.datetime_col, date_col)
+        self.assertEqual(sessionise.session_timeout, session_timeout)
+        # Test for incorrect datetime column name
+        with self.assertRaises(TypeError):
+            preprocessing.Sessionise(self._df, unique_id_col, unique_id_col)
+        # Test for unique ID column name which is not in DataFrame
+        with self.assertRaises(ValueError):
+            preprocessing.Sessionise(self._df, 'incorrect', date_col)
+
+    def test__add_session_boundaries(self):
+        """
+        Tests the `add_session_boundaries` function.
+        """
+        sessionise = preprocessing.Sessionise(self._df, 'unique_id', 'date')
         df = sessionise.df
         sessionise._add_session_boundaries()  # pylint: disable=W0212
         columns = sessionise.df.columns
@@ -65,4 +67,50 @@ class TestSessionise(unittest.TestCase):
         self.assertEqual(
             df[df['session_boundary'] == True].sum()['session_boundary'],
             2
+        )
+
+    def test__get_or_create_uuid(self):
+        """
+        Tests `_get_or_create_uuid` function with known cases.
+        """
+        sessionise = preprocessing.Sessionise(self._df, 'unique_id', 'date')
+        sessionise._add_session_boundaries()
+        df = sessionise.df
+        df.loc[:, 'session_uuid'] = df.apply(
+            lambda row: sessionise._get_or_create_uuid(row), axis=1
+        )
+        self.assertEqual(df.loc[0, 'session_uuid'], df.loc[1, 'session_uuid'])
+        self.assertNotEqual(
+            df.loc[2, 'session_uuid'], df.loc[3, 'session_uuid']
+        )
+        self.assertNotEqual(
+            df.loc[3, 'session_uuid'], df.loc[4, 'session_uuid']
+        )
+        self.assertEqual(df.loc[4, 'session_uuid'], df.loc[5, 'session_uuid'])
+        self.assertNotEqual(
+            df.loc[5, 'session_uuid'], df.loc[6, 'session_uuid']
+        )
+
+    def test__create_partitions(self):
+        """
+        Tests the `_create_partitions` function
+        """
+        sessionise = preprocessing.Sessionise(self._df, 'unique_id', 'date')
+        df = sessionise.df
+        _partitions = sessionise._create_partitions(4)
+        partitions = [list(p) for p in _partitions]
+        for partition in partitions:
+            self.assertEqual(len(set(partition)), len(partition))
+
+    def test_assign_sessions(self):
+        """
+        Test for `assign_sessions` function in single and multiprocessing mode
+        """
+        sess_single = preprocessing.Sessionise(self._df, 'unique_id', 'date')
+        df_single = sess_single.assign_sessions(n_jobs=1)
+        sess_parallel = preprocessing.Sessionise(self._df, 'unique_id', 'date')
+        df_parallel = sess_parallel.assign_sessions(n_jobs=4)
+        self.assertEqual(
+            df_single['session_uuid'].nunique(),
+            df_parallel['session_uuid'].nunique()
         )
