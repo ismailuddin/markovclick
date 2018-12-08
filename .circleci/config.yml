@@ -35,12 +35,11 @@ jobs:
         
       - run:
           environment:
-             CODECOV_TOKEN="01867e2e-67ff-44e4-9ac0-1cc37a4375de"
+             CODECOV_TOKEN: 01867e2e-67ff-44e4-9ac0-1cc37a4375de
           name: run tests
           command: |
             . venv/bin/activate
             pytest
-            codecov
 
       - store_artifacts:
           path: test-reports
