@@ -23,9 +23,11 @@ Python implementation of the R package [clickstream](https://cran.r-project.org/
 python setup.py install
 ```
 
-## Documentation
-To build the documentation, run `build html` inside the `docs/` directory. The documentation can then be launched using a web server running within the `docs/_build/html` directory. Using Python 3, this can be launched with the command `python3 -m http.server` (`python -m SimpleHTTPServer` for Python 2.7).
+## Tests
+Tests can be run using `pytest` or `tox` command from the root directory.
 
+## Documentation
+To build the documentation, run `make build_docs`. The documentation can then be viewed through a web server using `make serve_docs`.
 
 ## Usage
 
