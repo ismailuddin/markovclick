@@ -126,14 +126,16 @@ class Sessionise:
             list: List of DataFrames partitioned
         """
         uniq_ids = self.df[self.unique_id_col].unique()
-        partitions = list(filter(None, np.array_split(uniq_ids, partitions)))
+        partitions = list(
+            filter(lambda x: x.size > 0, np.array_split(uniq_ids, partitions))
+        )
         return partitions
 
     def _assign_sessions_parallel(self, df, partition: list, queue):
         """
         Assigns sessions to partition of DataFrame, created using list of 
         unique IDs provided in partition argument.
-        
+
         Args:
             df (pd.DataFrame): DataFrame containing clickstream data
             partition (list): List of unique IDs to subset DataFrame

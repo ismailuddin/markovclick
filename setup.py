@@ -11,7 +11,7 @@ websites as Markov chains, which can then be used to predict the next likely\
 click on a website for a user, given their history and current state.
 """
 
-# Get the dependencies and installs
+Get the dependencies and installs
 with open(path.join(HERE, 'requirements.txt'), encoding='utf-8') as f:
     ALL_REQS = f.read().split('\n')
 
@@ -35,7 +35,7 @@ setup(
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
     author='Ismail Uddin',
-    INSTALL_REQUIRES=INSTALL_REQUIRES,
-    DEPENDENCY_LINKS=DEPENDENCY_LINKS,
+    # install_requires=INSTALL_REQUIRES,
+    # dependency_links=DEPENDENCY_LINKS,
     author_email='ismail.sameeuddin@gmail.com'
 )

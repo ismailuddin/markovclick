@@ -94,8 +94,7 @@ html_theme_options = {
     'bootswatch_theme': "cosmo",
     'navbar_pagenav': False,
     'navbar_links': [
-        ("Models", "models/index"),
-        ()
+        ("Models", "models/index")
     ],
 
 }
