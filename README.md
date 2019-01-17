@@ -92,14 +92,14 @@ In the graph produced, the nodes representing the individual pages are shown in 
 
 #### Sessionise clickstream data
 
-#####`Sessionise`
+##### `Sessionise`
 
 To sessionise clickstream data, the following code can be used that require a `pandas` DataFrame object.
 
 ```python
 from markovclic.preprocessing import Sessionise
 sessioniser = Sessionise(df, unique_id_col='cookie_id',
-						 datetime_col='timestamp', session_timeout=30)
+			 datetime_col='timestamp', session_timeout=30)
 ```
 
 ##### Arguments
@@ -111,7 +111,7 @@ sessioniser = Sessionise(df, unique_id_col='cookie_id',
 | `datetime_col`    | String    | Column name of timestamp column.                             |
 | `session_timeout` | Integer   | Maximum time in minutes after which a session is broken.     |
 
-#####`Sessionise.assign_sessions()`
+##### `Sessionise.assign_sessions()`
 
 With a `Sessionise` object instantiated, the `assign_sessions()` function can then be called. This function supports multi-processing, enabling you the split job into multiple processes to take advantage of a multi-core CPU.
 
