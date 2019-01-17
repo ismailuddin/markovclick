@@ -7,7 +7,6 @@ import unittest
 
 import pandas as pd
 from datetime import datetime
-import uuid
 from markovclick import preprocessing
 
 

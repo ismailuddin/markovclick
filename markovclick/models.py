@@ -51,9 +51,13 @@ class MarkovClickstream:
 
         populate_count_matrix = chain.from_iterable(self.clickstream_list)
         if prefixed:
-            self.pages = sorted(list(set(populate_count_matrix)), key=lambda x: int(x[1:]))
+            self.pages = sorted(
+                list(set(populate_count_matrix)), key=lambda x: int(x[1:])
+            )
         else:
-            self.pages = sorted(list(set(populate_count_matrix)), key=lambda x: int(x))
+            self.pages = sorted(
+                list(set(populate_count_matrix)), key=lambda x: int(x)
+            )
 
         return self.pages
 

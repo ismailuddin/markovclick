@@ -56,6 +56,7 @@ m = MarkovClickstream(clickstream)
 
 The instance `m` of the `MarkovClickstream` class provides access the class's attributes such as the probability matrix (`m.prob_matrix`) used to model the Markov chain, and the list of unique pages (`m.pages`) featuring in the clickstream.
 
+### Visualisation 
 
 #### Visualising as a heatmap
 
@@ -66,5 +67,63 @@ sns.heatmap(m.prob_matrix, xticklabels=m.pages, yticklabels=m.pages)
 ```
 
 
+<img src="heatmap_example.png" width="400">
 
-![](heatmap_example.png)
+#### Visualising the Markov chain
+
+A Markov chain can be thought of as a graph of nodes and edges, with the edges representing the transitions from each state. `markovclick` provides a wrapper function around the `graphviz` package to visualise the Markov chain in this manner.
+
+```python
+from markovclick.viz imoport visualise_markov_chain
+graph = visualise_markov_chain(m)
+```
+
+The function `visualise_markov_chain()` returns a `Digraph` object, which can be viewed directly inside a Jupyter notebook by simply calling the reference to the object returned. It can also be outputted to a PDF file by calling the `render()` function on the object. 
+
+<img src="markov_chain.png" width="400">
+
+In the graph produced, the nodes representing the individual pages are shown in green, and up to 3 edges from each node are rendered. The first edge is in a thick blue arrow, depicting the most likely transition from this page / state to the next page / state. The second edge depicted by a thinner blue arrow, depicts the second most likely transition from this state. Finally, a third edge is shown that depicts the transition from this page / state back to itself. This edge is only show, if the the top most likely transitions are not already to itself. For all transitions, the probability is shown next to the edge (arrow).
+
+
+
+### Clickstream processing with `markovclick.preprocessing`
+
+`markovclick` provides functions to process clickstream data such as server logs, which contain unique identifiers such as cookie IDs associated with each click. This allows clicks to be aggregated into groups, whereby clicks from the same browser (identified by the unique identifier) are grouped such that the difference between individual clicks does not exceed the maximum session timeout (typically taken to be 30 minutes).
+
+#### Sessionise clickstream data
+
+#####`Sessionise`
+
+To sessionise clickstream data, the following code can be used that require a `pandas` DataFrame object.
+
+```python
+from markovclic.preprocessing import Sessionise
+sessioniser = Sessionise(df, unique_id_col='cookie_id',
+						 datetime_col='timestamp', session_timeout=30)
+```
+
+##### Arguments
+
+| Argument          | Type      | Description                                                  |
+| ----------------- | --------- | ------------------------------------------------------------ |
+| `df`              | DataFrame | `pandas` DataFrame object containing clickstream data. Must contain atleast a timestamp column, unique identifier column such as cookie ID. |
+| `unique_id_col`   | String    | Column name of unique identifier, e.g. `cookie_id`           |
+| `datetime_col`    | String    | Column name of timestamp column.                             |
+| `session_timeout` | Integer   | Maximum time in minutes after which a session is broken.     |
+
+#####`Sessionise.assign_sessions()`
+
+With a `Sessionise` object instantiated, the `assign_sessions()` function can then be called. This function supports multi-processing, enabling you the split job into multiple processes to take advantage of a multi-core CPU.
+
+```python
+sessioniser.assign_sessions(n_jobs=2)
+```
+
+##### Arguments
+
+| Argument | Type    | Description                                                  |
+| -------- | ------- | ------------------------------------------------------------ |
+| `n_jobs` | Integer | Number of processes to spawn to enable parallel processing. If set to `1`, no splitting occurs. |
+
+The `assign_sessions()` function returns the DataFrame, with an additional column added storing the unique identifier for the session. Rows of the DataFrame can then be grouped using this column.
+

@@ -151,10 +151,10 @@ class Sessionise:
             boundary = row['session_boundary']
 
             if boundary is True or curr_uniq_id != prev_anon_id:
-                self.curr_uniq_id = str(uuid4())
-                return self.curr_uniq_id
+                curr_session_uuid = str(uuid4())
+                return curr_session_uuid
             else:
-                return self.curr_uniq_id
+                return curr_session_uuid
 
         _df.loc[:, 'session_uuid'] = _df.apply(
             lambda row: get_or_create_uuid(row), axis=1
