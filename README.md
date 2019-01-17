@@ -82,7 +82,7 @@ The function `visualise_markov_chain()` returns a `Digraph` object, which can be
 
 <img src="markov_chain.png" width="400">
 
-In the graph produced, the nodes representing the individual pages are shown in green, and up to 3 edges from each node are rendered. The first edge is in a thick blue arrow, depicting the most likely transition from this page / state to the next page / state. The second edge depicted by a thinner blue arrow, depicts the second most likely transition from this state. Finally, a third edge is shown that depicts the transition from this page / state back to itself. This edge is only show, if the the top most likely transitions are not already to itself. For all transitions, the probability is shown next to the edge (arrow).
+In the graph produced, the nodes representing the individual pages are shown in green, and up to 3 edges from each node are rendered. The first edge is in a thick blue arrow, depicting the most likely transition from this page / state to the next page / state. The second edge depicted by a thinner blue arrow, depicts the second most likely transition from this state. Finally, a third edge is shown that depicts the transition from this page / state back to itself (light grey). This edge is only shown if the the two most likely transitions are not already to itself. For all transitions, the probability is shown next to the edge (arrow).
 
 
 
