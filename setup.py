@@ -5,7 +5,7 @@ Setup file for installing package.
 from os import path
 from setuptools import setup, find_packages
 
-__version__ = '0.0.1'
+__version__ = '0.1.0'
 
 HERE = path.abspath(path.dirname(__file__))
 
@@ -13,13 +13,6 @@ LONG_DESCRIPTION = """`markovclick` allows you to model clickstream data from\
 websites as Markov chains, which can then be used to predict the next likely\
 click on a website for a user, given their history and current state.
 """
-
-# Get the dependencies and installs
-# with open(path.join(HERE, 'requirements.txt'), encoding='utf-8') as f:
-#     ALL_REQS = f.read().split('\n')
-
-# INSTALL_REQUIRES = [x.strip() for x in ALL_REQS if 'git+' not in x]
-# DEPENDENCY_LINKS = [x.strip().replace('git+', '') for x in ALL_REQS if x.startswith('git+')]
 
 setup(
     name='markovclick',
@@ -40,5 +33,4 @@ setup(
     author='Ismail Uddin',
     # install_requires=INSTALL_REQUIRES,
     # dependency_links=DEPENDENCY_LINKS,
-    author_email='ismail.sameeuddin@gmail.com'
 )

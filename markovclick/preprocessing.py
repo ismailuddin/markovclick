@@ -17,6 +17,21 @@ class Sessionise:
 
     def __init__(self, df, unique_id_col: str, datetime_col: str,
                  session_timeout: int = 30) -> None:
+        """
+        Instantiates object of ``Sessionise`` class.
+        
+        
+        
+        Args:
+            df (pd.DataFrame): ``pandas`` DataFrame object containing
+                clickstream data. Must contain atleast a timestamp column,
+                unique identifier column such as cookie ID.
+            unique_id_col (str): Column name of unique identifier, e.g.
+                ``cookie_id``
+            datetime_col (str): Column name of timestamp column.
+            session_timeout (int, optional): Defaults to 30. Maximum time in
+                minutes after which a session is broken.
+        """
         self._df = df
         self.unique_id_col = unique_id_col
         self.datetime_col = datetime_col
@@ -27,21 +42,21 @@ class Sessionise:
     @property
     def df(self):
         """
-        Provides access to df attribute
+        Provides access to ``df`` attribute
         """
         return self._df
 
     @property
     def unique_id_col(self):
         """
-        Provides access to unique_id_col attribute
+        Provides access to ``unique_id_col`` attribute
         """
         return self.__unique_id_col
 
     @unique_id_col.setter
     def unique_id_col(self, name: str):
         """
-        Sets value for unique_id_col attribute
+        Sets value for ``unique_id_col`` attribute
         """
         if name not in self.df.columns:
             raise ValueError("Unique ID column name not in dataframe.")
@@ -53,14 +68,14 @@ class Sessionise:
     @property
     def datetime_col(self):
         """
-        Provides access to datetime_col attribute
+        Provides access to ``datetime_col`` attribute
         """
         return self.__datetime_col
 
     @datetime_col.setter
     def datetime_col(self, name: str):
         """
-        Sets value for datetime_col attribute
+        Sets value for ``datetime_col`` attribute
         """
         if isinstance(name, str) and np.issubdtype(
                 self.df[name], np.datetime64
@@ -73,7 +88,7 @@ class Sessionise:
     @property
     def session_timeout(self):
         """
-        Provides access to session_timeout attribute
+        Provides access to ``session_timeout`` attribute
         """
         return self._session_timeout
 
@@ -89,7 +104,9 @@ class Sessionise:
         self._df['session_boundary'] = self._df['time_diff'] - timedelta(
             minutes=self.session_timeout
         )
-        self._df.loc[:, 'session_boundary'] = self._df['session_boundary'].apply(
+        self._df.loc[:, 'session_boundary'] = self._df[
+            'session_boundary'
+        ].apply(
             lambda row: True if row > timedelta(0) else False
         )
 
@@ -133,7 +150,7 @@ class Sessionise:
 
     def _assign_sessions_parallel(self, df, partition: list, queue):
         """
-        Assigns sessions to partition of DataFrame, created using list of 
+        Assigns sessions to partition of DataFrame, created using list of
         unique IDs provided in partition argument.
 
         Args:
@@ -163,16 +180,17 @@ class Sessionise:
 
     def assign_sessions(self, n_jobs: int = 1):
         """
-        Assigns unique session IDs to individual clicks that form the sessions.
-        Supports parallel processing through setting `n_jobs` to higher than 1.
+        Assigns unique session IDs to individual clicks that form the
+        sessions. Supports parallel processing through setting ``n_jobs`` to
+        higher than 1.
 
         Args:
             n_jobs (int, optional): Defaults to 1. If 2 or higher, enables
                 parallel processing.
 
         Returns:
-            pd.DataFrame: Returns sessionised DataFrame, with session IDs
-            stored in `session_UUID` column.
+            pd.DataFrame: Returns sessionised DataFrame, with session IDs 
+            stored in ``session_UUID`` column.
         """
         self._add_session_boundaries()
         if n_jobs == 1:
