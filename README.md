@@ -4,6 +4,8 @@
 
 [![CircleCI](https://circleci.com/gh/ismailuddin/markovclick/tree/master.svg?style=svg)](https://circleci.com/gh/ismailuddin/markovclick/tree/master)
 ![AUR](https://img.shields.io/aur/license/yaourt.svg)
+[![Documentation Status](https://readthedocs.org/projects/markovclick/badge/?version=latest)](https://markovclick.readthedocs.io/en/latest/?badge=latest)
+
 
 Python implementation of the R package [clickstream](https://cran.r-project.org/web/packages/clickstream/index.html) which models website clickstreams as Markov chains.
 
@@ -21,6 +23,11 @@ Python implementation of the R package [clickstream](https://cran.r-project.org/
 ## Installation
 ```
 python setup.py install
+```
+or
+
+```
+pip install markovclick
 ```
 
 ## Tests

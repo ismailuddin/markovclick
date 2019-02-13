@@ -1,13 +1,18 @@
 markovclick
 ===============
 
-.. figure:: _static/header.png
+.. figure:: _static/img/header.png
    :width: 750px
+   
+.. image:: https://readthedocs.org/projects/markovclick/badge/?version=latest
+    :target: https://markovclick.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 
 .. image:: https://circleci.com/gh/ismailuddin/markovclick/tree/master.svg?style=svg
     :target: https://circleci.com/gh/ismailuddin/markovclick/tree/master
 
 .. image:: https://img.shields.io/aur/license/yaourt.svg
+
 
 .. toctree::
     :hidden:
