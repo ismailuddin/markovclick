@@ -31,7 +31,7 @@ pip install markovclick
 ```
 
 ## Tests
-Tests can be run using `pytest` or `tox` command from the root directory.
+Tests can be run using the `pytest` command from the root directory.
 
 ## Documentation
 Documentation can be viewed at [https://markovclick.readthedocs.io/](https://markovclick.readthedocs.io/).
