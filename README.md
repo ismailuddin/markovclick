@@ -64,6 +64,20 @@ m = MarkovClickstream(clickstream)
 
 The instance `m` of the `MarkovClickstream` class provides access the class's attributes such as the probability matrix (`m.prob_matrix`) used to model the Markov chain, and the list of unique pages (`m.pages`) featuring in the clickstream.
 
+### PageRank score
+The PageRank score for each page in the clickstream can also be calculated as follows:
+
+```python
+digraph, pagerank = m.calculate_pagerank(max_nodes=2)
+```
+
+| Argument | Type | Description |
+| -------- | ---- | ------------|
+| max_nodes | int | (Optional, defaults to 2). The number of pages to include as nodes linking to each node when generating the graph. Selected in order of most probable transition from Markov chain |
+pr_kwargs | dict | (Optional, defaults to `{}`). Dictionary to pass arguments to `networkx.linkanalysis.pagerank()` function. See details [here](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.link_analysis.pagerank_alg.pagerank.html).
+
+The `digraph` object holds the `networkx` `DiGraph` class which was used to calculate the PageRank score, and the `pagerank` object is a dictionary of PageRank scores for each page in the network.
+
 ### Visualisation 
 
 #### Visualising as a heatmap

@@ -2,10 +2,11 @@
 Models module which holds MarkovClickstream model.
 """
 
-
+from typing import Tuple
 from itertools import product, chain
 from tqdm import tqdm
 import numpy as np
+import networkx as nx
 
 
 class MarkovClickstream:
@@ -210,3 +211,40 @@ class MarkovClickstream:
             potential_routes_prob.append(prob)
 
         return potential_routes, potential_routes_prob
+
+    def calculate_pagerank(
+        self, max_nodes: int=2, pr_kwargs: dict={}
+    ) -> Tuple[nx.DiGraph, dict]:
+        """
+        Calculates the Google PageRank for each of the pages in the Markov
+        chain.
+
+        Converts the Markov chain into a directed graph using `networkx`, and
+        uses its built in functions to calculate the PageRank score for each
+        page represented as a node in the graph.
+
+        Args:
+            max_nodes (int): (Optional, defaults to 2). Specifies the number of
+                edges (pages) to add to the digraph in order of most probable
+                transition.
+            pr_kwargs (dict): (Optional, defaults to empty dictionary.)
+                Dictionary of arguments to provide to the `networkx` function
+                for calculating PageRank. Refer to https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.link_analysis.pagerank_alg.pagerank.html
+                for more details.
+
+        Returns:
+            Tuple[nx.DiGraph, dict]: networkx DiGraph object, and associated
+                PageRank scores for each page (node in DiGraph).
+        """
+
+        digraph = nx.DiGraph()
+        prob_matrix_sorted = np.argsort(self.prob_matrix, axis=1)
+        nodes = self.pages
+        for i, node in enumerate(nodes):
+            digraph.add_node(node)
+            for n in range(max_nodes):
+                next_transition = nodes[prob_matrix_sorted[i, (n + 1) * -1]]
+                digraph.add_edge(node, next_transition)
+
+        pagerank_scores = nx.link_analysis.pagerank(digraph, **pr_kwargs)
+        return digraph, pagerank_scores

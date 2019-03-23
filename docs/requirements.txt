@@ -1,3 +1,4 @@
 markovclick
 tqdm
 graphviz
+networkx

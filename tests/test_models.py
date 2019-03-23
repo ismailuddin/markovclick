@@ -6,6 +6,8 @@ Module to run tests for the markovclick/models.py file
 import unittest
 import numpy as np
 from markovclick.models import MarkovClickstream
+import networkx as nx
+import random
 from markovclick.dummy import gen_random_clickstream
 from markovclick.utils.helpers import flatten_list
 
@@ -92,3 +94,34 @@ class TestModels(unittest.TestCase):
         prob_matrix = markov_clickstream.prob_matrix
         for row in range(prob_matrix.shape[0]):
             self.assertAlmostEqual(np.sum(prob_matrix[row, :]), 1)
+
+    def test_calculate_pagerank(self):
+        """
+        Test the 'calculate_pagerank` function.
+        """
+        clickstream = gen_random_clickstream(n_of_streams=100, n_of_pages=12)
+        markov_clickstream = MarkovClickstream(
+            clickstream_list=clickstream
+        )
+        n_pages = len(markov_clickstream.pages)
+        max_edges = random.randrange(1, n_pages)
+        digraph, pagerank_scores = markov_clickstream.calculate_pagerank(
+            max_nodes=max_edges
+        )
+        self.assertIsInstance(digraph, nx.DiGraph)
+        self.assertIsInstance(pagerank_scores, dict)
+        self.assertEqual(
+            digraph.number_of_nodes(), n_pages
+        )
+        self.assertLess(
+            digraph.number_of_nodes(),
+            (max_edges * n_pages) + 1
+        )
+        self.assertGreater(
+            digraph.number_of_edges(),
+            n_pages - 1
+        )
+        self.assertEqual(
+            len(pagerank_scores.values()),
+            n_pages
+        )
