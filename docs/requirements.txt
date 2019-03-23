@@ -1,1 +1,3 @@
 markovclick
+tqdm
+graphviz
