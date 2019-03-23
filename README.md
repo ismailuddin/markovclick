@@ -1,4 +1,4 @@
-![](header.png)
+![](https://raw.githubusercontent.com/ismailuddin/markovclick/master/docs/source/_static/img/header.png)
 
 # markovclick
 
@@ -34,7 +34,8 @@ pip install markovclick
 Tests can be run using `pytest` or `tox` command from the root directory.
 
 ## Documentation
-To build the documentation, run `make build_docs`. The documentation can then be viewed through a web server using `make serve_docs`.
+Documentation can be viewed at [https://markovclick.readthedocs.io/](https://markovclick.readthedocs.io/).
+To build the documentation, run `make html` inside the `/docs` directory.
 
 ## Usage
 
@@ -74,7 +75,7 @@ sns.heatmap(m.prob_matrix, xticklabels=m.pages, yticklabels=m.pages)
 ```
 
 
-<img src="heatmap_example.png" width="400">
+<img src="https://raw.githubusercontent.com/ismailuddin/markovclick/master/docs/source/_static/img/heatmap_example.png" width="400">
 
 #### Visualising the Markov chain
 
@@ -87,7 +88,7 @@ graph = visualise_markov_chain(m)
 
 The function `visualise_markov_chain()` returns a `Digraph` object, which can be viewed directly inside a Jupyter notebook by simply calling the reference to the object returned. It can also be outputted to a PDF file by calling the `render()` function on the object. 
 
-<img src="markov_chain.png" width="400">
+<img src="https://raw.githubusercontent.com/ismailuddin/markovclick/master/docs/source/_static/img/markov_chain.png" width="400">
 
 In the graph produced, the nodes representing the individual pages are shown in green, and up to 3 edges from each node are rendered. The first edge is in a thick blue arrow, depicting the most likely transition from this page / state to the next page / state. The second edge depicted by a thinner blue arrow, depicts the second most likely transition from this state. Finally, a third edge is shown that depicts the transition from this page / state back to itself (light grey). This edge is only shown if the the two most likely transitions are not already to itself. For all transitions, the probability is shown next to the edge (arrow).
 

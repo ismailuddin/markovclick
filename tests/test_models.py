@@ -4,8 +4,6 @@ Module to run tests for the markovclick/models.py file
 
 
 import unittest
-import warnings
-
 import numpy as np
 from markovclick.models import MarkovClickstream
 from markovclick.dummy import gen_random_clickstream

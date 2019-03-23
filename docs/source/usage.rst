@@ -30,6 +30,7 @@ produce dummy data for you to experiment with:
 To build a Markov chain from the dummy data:
 
 .. code-block:: python
+
     from markovclick.models import MarkovClickstream
     m = MarkovClickstream(clickstream)
 
@@ -49,6 +50,7 @@ Visualising as a heatmap
 The probability matrix can be visualised as a heatmap as follows:
 
 .. code-block:: python
+
     sns.heatmap(m.prob_matrix, xticklabels=m.pages, yticklabels=m.pages)
 
 
@@ -59,11 +61,12 @@ Visualising the Markov chain
 //////////////////////////////
 
 A Markov chain can be thought of as a graph of nodes and edges, with the edges
-representing the transitions from each state. ``markovclick`` provides a wrapper
-function around the ``graphviz`` package to visualise the Markov chain in this
-manner.
+representing the transitions from each state. ``markovclick`` provides a
+wrapper function around the ``graphviz`` package to visualise the Markov chain
+in this manner.
 
 .. code-block:: python
+
     from markovclick.viz imoport visualise_markov_chain
     graph = visualise_markov_chain(m)
 
@@ -100,12 +103,13 @@ the difference between individual clicks does not exceed the maximum session
 timeout (typically taken to be 30 minutes).
 
 Sessionise clickstream data
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+////////////////////////////
 
 To sessionise clickstream data, the following code can be used that require a
 `pandas` DataFrame object.
 
 .. code-block:: python
+
     from markovclic.preprocessing import Sessionise
     sessioniser = Sessionise(df, unique_id_col='cookie_id',
                 datetime_col='timestamp', session_timeout=30)
@@ -120,6 +124,7 @@ can then be called. This function supports multi-processing, enabling you the
 split job into multiple processes to take advantage of a multi-core CPU.
 
 .. code-block:: python
+
     sessioniser.assign_sessions(n_jobs=2)
 
 

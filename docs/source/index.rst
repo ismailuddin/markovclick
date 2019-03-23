@@ -3,7 +3,7 @@ markovclick
 
 .. figure:: _static/img/header.png
    :width: 750px
-   
+
 .. image:: https://readthedocs.org/projects/markovclick/badge/?version=latest
     :target: https://markovclick.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
@@ -23,7 +23,7 @@ markovclick
     api/index
     usage
 
-`markovclick` allows you to model clickstream data from websites as Markov
+``markovclick`` allows you to model clickstream data from websites as Markov
 chains, which can then be used to predict the next likely click on a website
 for a user, given their history and current state.
 
@@ -55,7 +55,7 @@ or via ``pip``:
 Tests
 ------
 
-Tests can be run using ``pytest`` or ``tox`` command from the root directory.
+Tests can be run using ``pytest`` command from the root directory.
 
 Documentation
 --------------
