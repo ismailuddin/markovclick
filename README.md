@@ -44,7 +44,7 @@ To start using the package without any data, `markovclick` can produce dummy dat
 
 ```python
 from markovclick import dummy
-clickstream = dummy.gen_random_clickstream(nOfStreams=100, nOfPages=12)
+clickstream = dummy.gen_random_clickstream(n_of_streams=100, n_of_pages=12)
 ```
 
 
@@ -96,7 +96,7 @@ sns.heatmap(m.prob_matrix, xticklabels=m.pages, yticklabels=m.pages)
 A Markov chain can be thought of as a graph of nodes and edges, with the edges representing the transitions from each state. `markovclick` provides a wrapper function around the `graphviz` package to visualise the Markov chain in this manner.
 
 ```python
-from markovclick.viz imoport visualise_markov_chain
+from markovclick.viz import visualise_markov_chain
 graph = visualise_markov_chain(m)
 ```
 
