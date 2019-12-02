@@ -3,7 +3,7 @@
 # markovclick
 
 [![CircleCI](https://circleci.com/gh/ismailuddin/markovclick/tree/master.svg?style=svg)](https://circleci.com/gh/ismailuddin/markovclick/tree/master)
-![AUR](https://img.shields.io/aur/license/yaourt.svg)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Documentation Status](https://readthedocs.org/projects/markovclick/badge/?version=latest)](https://markovclick.readthedocs.io/en/latest/?badge=latest)
 
 
