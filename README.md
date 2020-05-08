@@ -119,7 +119,7 @@ In the graph produced, the nodes representing the individual pages are shown in 
 To sessionise clickstream data, the following code can be used that require a `pandas` DataFrame object.
 
 ```python
-from markovclic.preprocessing import Sessionise
+from markovclick.preprocessing import Sessionise
 sessioniser = Sessionise(df, unique_id_col='cookie_id',
 			 datetime_col='timestamp', session_timeout=30)
 ```
@@ -149,3 +149,19 @@ sessioniser.assign_sessions(n_jobs=2)
 
 The `assign_sessions()` function returns the DataFrame, with an additional column added storing the unique identifier for the session. Rows of the DataFrame can then be grouped using this column.
 
+To use our new sessionized data frame with a Markov model, we can simply:
+
+```python
+sessioniser = Sessionise(df, 
+	unique_id_col='cookie_id', 
+	datetime_col='timestamp', 
+	session_timeout=30)
+
+sess_df = sessioniser.assign_sessions(n_jobs=2)
+
+df_grouped = sess_df.groupby(['session_uuid'])['page_category'].apply(list)
+
+m = MarkovClickstream(df_grouped)
+```
+
+Where `page_category` is the grouping information for your clickstream.
